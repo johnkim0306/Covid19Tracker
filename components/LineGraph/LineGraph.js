@@ -24,7 +24,7 @@ const options = {
     },
   },
   scales: {
-    xAxes: [
+    x:
       {
         type: "time",
         time: {
@@ -32,8 +32,7 @@ const options = {
           tooltipFormat: "ll",
         },
       },
-    ],
-    yAxes: [
+    y: 
       {
         gridLines: {
           display: false,
@@ -45,7 +44,6 @@ const options = {
           },
         },
       },
-    ],
   },
 };
 

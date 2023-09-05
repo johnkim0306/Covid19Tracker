@@ -3,6 +3,8 @@ import { Line, Pie } from "react-chartjs-2";
 import axios from "axios";
 import numeral from "numeral";
 import './chart.scss'
+import moment from 'moment';
+import 'chartjs-adapter-moment';
 // import {ArcElement,Chart} from 'chart.js'
 
 // Chart.register(ArcElement, Line, Pie)
@@ -37,17 +39,14 @@ const options = {
       },
     },
     scales: {
-      xAxes: [
-        {
+      x: {
           type: "time",
           time: {
             format: "MM/DD/YY",
             tooltipFormat: "ll",
           },
-        },
-      ],
-      yAxes: [
-        {
+      },
+      y: {
           gridLines: {
             display: false,
           },
@@ -56,8 +55,7 @@ const options = {
               return numeral(value).format("0a");
             },
           },
-        },
-      ],
+      },
     },
     height: 500
   };

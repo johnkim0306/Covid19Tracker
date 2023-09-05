@@ -77,19 +77,19 @@ const Papers = ({ handleCountryChange, country, countries }) => {
               onChange={(e) => handleCountryChange(e.target.value)}
             >
               <MenuItem value="worldwide">Worldwide</MenuItem>
-              {countries.map((country) => (
-                <MenuItem value={country.value}>{country.name}</MenuItem>
+              {countries.map((country, index) => (
+                <MenuItem key={index} value={country.value}>{country.name}</MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          <div class="flex flex-row">
+          <div className="flex flex-row">
             <div>
               <Typography variant="h5" style={{ color: 'white' }}>
                 Last Updated:
               </Typography>
             </div>
-            <div class="flex">
+            <div className="flex">
               <CalendarMonthRoundedIcon />
               <Typography color="textSecondary">
                 {new Date().toLocaleString() + ''}
