@@ -1,0 +1,22 @@
+.chart__container {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.container__piechart {
+    margin-bottom: 1rem;
+}
+
+.container__linechart {
+    margin-bottom: 1rem;
+}
+
+.chartjs-size-monitor.chartjs-size-monitor {
+    width: 100%;
+    height: 100%;
+}
+.chartjs-render-monitor.chartjs-render-monitor {
+    max-width: 100%;
+    min-height: 100%;
+}

@@ -1,113 +1,164 @@
-import Image from 'next/image'
+"use client";
 
-export default function Home() {
+import React, { useState, useEffect } from "react";
+import { MenuItem, FormControl, Select, Card   } from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import { DataTable, Papers, Header, Sidebar, Contact, Charts, GraphCanada, InfoBox, Map, LineGraph, Footer } from "../components";
+import { sortData, prettyPrintStat } from "../constants/util";
+import numeral from "numeral";
+import axios from "axios";
+import "./App.scss";
+import "leaflet/dist/leaflet.css";
+
+const Home = () => {
+  const [country, setInputCountry] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
+  const [countryName, setCountryName] = useState("worldwide");
+  const [countries, setCountries] = useState([]);
+  const [mapCountries, setMapCountries] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [casesType, setCasesType] = useState("cases");
+  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+  const [mapZoom, setMapZoom] = useState(3);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getData = async () => {
+      const worldData = await axios.get("https://disease.sh/v3/covid-19/all");
+      const countriesData = await axios.get("https://disease.sh/v3/covid-19/countries");
+
+      setCountryInfo(worldData.data);
+      setCountries(countriesData.data.map((country) => ({
+        name: country.country,
+        value: country.countryInfo.iso2,
+      })));
+      setMapCountries(countriesData.data);
+      setTableData(sortData(countriesData.data));
+      setLoading(false);
+    };
+    getData();
+  }, []);
+
+  const handleCountryChange = async (countryCode) => {
+    try {
+      setLoading(true);
+      setInputCountry(countryCode);
+      const data = await fetchCountryData(countryCode);
+      setCountryInfo(data);
+      setCountryName(data.country);
+      setMapZoom(countryCode === "worldwide" ? 3 : 4);
+      setMapCenter(
+        countryCode === "worldwide"
+          ? { lat: 34.80746, lng: -40.4796 }
+          : { lat: data.countryInfo.lat, lng: data.countryInfo.long }
+      );
+      setLoading(false);      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchCountryData = async (countryCode) => {
+    const url = countryCode === "worldwide"
+      ? "https://disease.sh/v3/covid-19/all"
+      : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+  
+    const { data } = await axios.get(url);
+    return data;
+  };
+
+  const activateCanada = () => handleCountryChange("CA");
+  const activateWorldWide = () => handleCountryChange("worldwide");
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="app">
+      <Header />
+      <Papers country={country} handleCountryChange={handleCountryChange} countries={countries} className="z-30"/>
+      <div className="app__middle top-20">
+        <div className="container">
+          <Sidebar activateCanada={activateCanada} activateWorldWide={activateWorldWide}/>
+        </div>
+        <div className="app__body z-20">
+          {loading ? (
+            <div className="loading">Loading...</div>
+          ) : (
+            <>
+            <div className="app__body-map">
+              <Card className="app__right">
+                <CardContent>
+                  <div className="app__information">
+                    <h3>Live Cases by Country</h3>
+                    <DataTable countries={tableData} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Map
+                countries={mapCountries}
+                casesType={casesType}
+                center={mapCenter}
+                zoom={mapZoom}
+              />
+            </div>
+
+            <div className="app__stats">
+              <InfoBox
+                onClick={(e) => setCasesType("cases")}
+                title="Coronavirus Cases"
+                isRed
+                active={casesType === "cases"}
+                cases={prettyPrintStat(countryInfo.todayCases)}
+                total={numeral(countryInfo.cases).format("0.0a")}
+              />
+              <InfoBox
+                onClick={(e) => setCasesType("recovered")}
+                title="Recovered"
+                active={casesType === "recovered"}
+                cases={prettyPrintStat(countryInfo.todayRecovered)}
+                total={numeral(countryInfo.recovered).format("0.0a")}
+              />
+              <InfoBox
+                onClick={(e) => setCasesType("deaths")}
+                title="Deaths"
+                isRed
+                active={casesType === "deaths"}
+                cases={prettyPrintStat(countryInfo.todayDeaths)}
+                total={numeral(countryInfo.deaths).format("0.0a")}
+              />
+            </div>
+
+
+
+            <div className="app__graph">
+              <h3>
+                {countryName} new {casesType}
+              </h3>
+              {countryName === "Canada" ? (
+                <GraphCanada casesType={casesType} countryName={countryName} />
+              ) : (
+                <LineGraph casesType={casesType} countryName={countryName} />
+              )}
+              <div className="graph">
+                <Charts
+                  casesType={casesType}
+                  recovered={countryInfo.todayRecovered}
+                  deaths={countryInfo.todayDeaths}
+                  cases={countryInfo.todayCases}
+                />
+              </div>
+            </div>
+
+
+
+            <Contact />
+            </>
+          )}
+
         </div>
       </div>
+      <Footer />
+    </div>
+  );
+};
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+export default Home;

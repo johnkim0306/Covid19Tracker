@@ -9,11 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.7",
+    "@mui/material": "^5.14.7",
+    "@mui/styles": "^5.14.7",
     "autoprefixer": "10.4.15",
+    "axios": "^1.5.0",
+    "chart.js": "^4.4.0",
     "next": "13.4.19",
+    "numeral": "^2.0.6",
     "postcss": "8.4.29",
     "react": "18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.10.1",
+    "react-leaflet": "^4.2.1",
+    "sass": "^1.66.1",
     "tailwindcss": "3.3.3"
   }
 }

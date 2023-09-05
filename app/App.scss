@@ -1,0 +1,171 @@
+@import "../styles/_variables";
+
+body {
+  background-color: #f5f6fa;
+}
+
+.app {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  background-color: #f5f6fa;
+  padding: .1875rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: .625rem;
+    justify-content: space-between;    
+  }
+
+  &__middle {
+    display: flex;
+    position: relative;
+
+    @media screen and (max-width: 1300px) {
+      justify-content: center;
+      overflow: hidden;
+    }
+  
+    @media screen and (max-width: 600px) {
+      justify-content: center;
+      overflow: hidden;
+    }
+  }
+  
+  &__body {
+    flex: 8;
+    margin-right: 1rem;
+    margin-left: 2rem;
+
+    &-map {
+      display: flex;
+      height: 32.5rem;
+      width: $container-width-lg;
+      background-color: white;
+      padding: 1rem;
+      border-radius: 1.25rem;  
+      box-shadow: 0 0 0.5rem -0.25rem rgba(0, 0, 0, 0.5);
+      text-align: center;
+
+      @media screen and (max-width: 1300px) {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+        width: auto;
+      }
+    
+      @media screen and (max-width: 600px) {
+        width: $container-width-lg;
+      }
+    }
+
+    @media screen and (max-width: 1300px) {
+      flex-direction: column;
+      width: $container-width-md;
+      flex: 1 1 auto;
+    }
+  
+    @media screen and (max-width: 600px) {
+      width: $container-width-lg;
+    }
+
+    & .app__stats {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5625rem 0rem;
+  
+      @media screen and (max-width: 1300px) {
+        width: $container-width-md;
+        margin: 0 auto;
+      }
+    
+      @media screen and (max-width: 600px) {
+        width: 96vw;
+        align-items: center;
+      }
+    }
+  }
+
+  &__header {
+    flex-direction: column;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &__dropdown {
+    width: 15.25rem;
+  }
+
+  &__right {
+    display: flex;
+    //margin-right: 1rem;
+
+    @media screen and (max-width: 600px) {
+      width: 100%;
+    }
+  }
+
+  &__information  {
+    width: 100%;
+    height: 100%;
+
+    & > h3 {
+      color: #6a5d5d;
+      font-weight: 400;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+  
+      &:last-of-type {
+        margin-top: 1rem;
+      }
+    }
+  }
+
+  &__graph {
+    width: $container-width-lg;
+
+    @media screen and (max-width: 600px) {
+      width: 100vw;
+    }
+  }
+}
+
+.MuiCard-root.MuiCard-root {
+  display: flex;
+  overflow: scroll;
+  align-content: center;
+  justify-content: center;
+  width: 100%;
+
+  &:last-child {
+    width: 100%;
+
+  }
+}
+.MuiCardContent-root:last-child {
+  width: 100%;
+}
+
+@media (max-width: 1300px) {
+  .app {
+    flex-direction: column;
+    //align-items: center;
+    //background: red;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .app {
+    //align-items: center;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    display: none;
+  }
+}

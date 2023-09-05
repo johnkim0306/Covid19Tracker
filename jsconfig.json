@@ -1,7 +1,18 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/components/*": ["components/*"],
+      "@/components/Chart/*": ["components/Charts/*"],
+      "@/components/Contact/*": ["components/Contact/*"],
+      "@/components/Footer/*": ["components/Footer/*"],
+      "@/components/Graph/*": ["components/Graph/*"],
+      "@/components/Header/*": ["components/Header/*"],
+      "@/components/Infobox/*": ["components/Infobox/*"],
+      "@/components/Map/*": ["components/Map/*"],
+      "@/components/Papers/*": ["components/Papers/*"],
+      "@/components/Sidebar/*": ["components/Sidebar/*"],
+      "@/components/Table/*": ["components/Table/*"],
     }
   }
 }
