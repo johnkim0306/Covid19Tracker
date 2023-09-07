@@ -3,17 +3,11 @@ import { Line, Pie } from "react-chartjs-2";
 import axios from "axios";
 import numeral from "numeral";
 import './chart.scss'
-import moment from 'moment';
 import 'chartjs-adapter-moment';
-// import {ArcElement,Chart} from 'chart.js'
-
-// Chart.register(ArcElement, Line, Pie)
-
-
-import { Chart, LineElement, PieController, ArcElement, CategoryScale, registerables } from "chart.js";
-// import { Line, Pie } from "react-chartjs-2";
-
-Chart.register(LineElement, PieController, ArcElement, CategoryScale, ...registerables);
+import 'moment';
+// import {Chart, ArcElement} from 'chart.js'
+// Chart.register(ArcElement);
+import 'chart.js/auto';
 
 const options = {
     legend: {
@@ -39,14 +33,16 @@ const options = {
       },
     },
     scales: {
-      x: {
+      x: 
+        {
           type: "time",
           time: {
             format: "MM/DD/YY",
             tooltipFormat: "ll",
           },
-      },
-      y: {
+        },
+      y: 
+        {
           gridLines: {
             display: false,
           },
@@ -55,7 +51,7 @@ const options = {
               return numeral(value).format("0a");
             },
           },
-      },
+        },
     },
     height: 500
   };
@@ -66,7 +62,7 @@ let style = {
   height:"50vh"
 }
 
-const Charts = ({ casesType = "cases", cases, recovered, deaths } ) => {
+const Chart = ({ casesType = "cases", cases, recovered, deaths } ) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -164,4 +160,4 @@ const Charts = ({ casesType = "cases", cases, recovered, deaths } ) => {
   );
 };
 
-export default Charts;
+export default Chart;

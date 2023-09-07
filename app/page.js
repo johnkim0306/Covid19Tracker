@@ -3,12 +3,20 @@
 import React, { useState, useEffect } from "react";
 import { MenuItem, FormControl, Select, Card   } from '@mui/material';
 import CardContent from '@mui/material/CardContent';
-import { DataTable, Papers, Header, Sidebar, Contact, Charts, GraphCanada, InfoBox, Map, LineGraph, Footer } from "../components";
+import { DataTable, Papers, Header, Sidebar, Contact, Charts, GraphCanada, InfoBox, LineGraph, Footer } from "../components";
 import { sortData, prettyPrintStat } from "../constants/util";
 import numeral from "numeral";
 import axios from "axios";
 import "./App.scss";
+import dynamic from 'next/dynamic'
+
 import "leaflet/dist/leaflet.css";
+
+const Map = dynamic(
+  () => import('../components/Map/Map'), // replace '@components/map' with your component's location
+  { ssr: false } // This line is important. It's what prevents server-side render
+)
+
 
 const Home = () => {
   const [country, setInputCountry] = useState("worldwide");
@@ -60,11 +68,15 @@ const Home = () => {
 
   const fetchCountryData = async (countryCode) => {
     const url = countryCode === "worldwide"
-      ? "https://disease.sh/v3/covid-19/all"
-      : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
-  
-    const { data } = await axios.get(url);
-    return data;
+      ? "http://disease.sh/v3/covid-19/all"
+      : `http://disease.sh/v3/covid-19/countries/${countryCode}`;
+    try {
+      const { data } = await axios.get(url);
+      return data;
+    } catch (error) {
+      console.error("AxiosError:", error);
+      throw error; // Re-throw the error to propagate it to the caller.
+    }
   };
 
   const activateCanada = () => handleCountryChange("CA");
