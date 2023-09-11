@@ -3,6 +3,7 @@ import "styles/globals.css";
 // import { Header } from '@/components'
 // import { Header } from '@/components/Header/Header';
 import { Header } from "../components";
+import { Footer } from "../components";
 
 export const metadata = {
   title: "Covid-19 Tracker",
@@ -10,13 +11,18 @@ export const metadata = {
 };
 
 const RootLayout = ({ children }) => (
-  <div className="main">
-    <div className="gradient" />
-    <main className="app">
-      <Header />
-      {children}
-    </main>
-  </div>
+  <html lang='en'>
+    <body>
+        <div className='main'>
+          <div className='gradient' />
+        </div>
+        <main className='app'>
+          <Header />
+          {children}
+          <Footer />
+        </main>
+    </body>
+  </html>
 );
 
 export default RootLayout;

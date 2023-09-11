@@ -124,8 +124,8 @@ const Diagnosis = () => {
   };
 
   return (
-    <div className="app">
-      <h2 style={{ width: '60%', padding: '20px', color: 'white' }}>Diagnosis Form</h2>
+    <section className="app px-32 mt-16">
+      <h2 style={{ width: '60%', padding: '28px', color: 'black' }} className="font-bold text-5xl px-14">Diagnosis Form</h2>
       <form>
         <FormControl error={error} variant="standard">
           <FormLabel id="demo-customized-radios">Gender</FormLabel>
@@ -231,7 +231,7 @@ const Diagnosis = () => {
           Submit
         </Button>
       </form>
-    </div>
+    </section>
 
   );
 }
