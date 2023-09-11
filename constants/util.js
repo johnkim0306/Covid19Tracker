@@ -1,6 +1,8 @@
-import React from "react";
 import numeral from "numeral";
 import { Circle, Popup } from "react-leaflet";
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
+import "leaflet-defaulticon-compatibility";
 
 const casesTypeColors = {
   cases: {
@@ -50,8 +52,9 @@ export const prettyPrintStat = (stat) =>
   stat ? `+${numeral(stat).format("0.0a")}` : "+0";
 
 export const showDataOnMap = (data, casesType = "cases") =>
-  data.map((country) => (
+  data.map((country, index) => (
     <Circle
+      key={index} // Use the index as the key
       center={[country.countryInfo.lat, country.countryInfo.long]}
       color={casesTypeColors[casesType].hex}
       fillColor={casesTypeColors[casesType].hex}

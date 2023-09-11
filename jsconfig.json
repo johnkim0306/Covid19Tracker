@@ -3,7 +3,6 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/components/Chart/*": ["components/Charts/*"],
       "@/components/Contact/*": ["components/Contact/*"],
       "@/components/Footer/*": ["components/Footer/*"],
       "@/components/Graph/*": ["components/Graph/*"],

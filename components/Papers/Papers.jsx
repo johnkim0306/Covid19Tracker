@@ -83,7 +83,7 @@ const Papers = ({ handleCountryChange, country, countries }) => {
             </Select>
           </FormControl>
 
-          <div className="flex flex-row">
+          <div className="flex flex-row flex-col ">
             <div>
               <Typography variant="h5" style={{ color: 'white' }}>
                 Last Updated:

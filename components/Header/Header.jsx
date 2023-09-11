@@ -9,10 +9,6 @@ import { navLinks } from "../../constants";
 import { menu, close } from "../../assets";
 import Image from 'next/image'
 
-
-// import { navLinks } from "../../constants";
-
-console.log(logo)
 const Header = () => {
   const [active, setActive] = useState("");
   const [scrolled, setScrolled] = useState(false);
@@ -47,7 +43,7 @@ const Header = () => {
             <span className='sm:block hidden'> | Tracker</span>
           </p>
       </div>
-      <ul className='list-none hidden sm:flex flex-row gap-10 bg-metal'>
+      <ul className='list-none hidden sm:flex flex-row gap-10'>
         {navLinks.map((nav, index) => (
           <li
             key={nav.id}
@@ -82,7 +78,7 @@ const Header = () => {
               {navLinks.map((nav) => (
                 <li
                   key={nav.id}
-                  className={`font-poppins cursor-pointer text-[16px] font-bold	 ${
+                  className={`font-poppins cursor-pointer text-[16px] font-bold	${
                     active === nav.title ? "bg-metal2" : "text-secondary"
                   }`}
                   onClick={() => {
@@ -95,14 +91,8 @@ const Header = () => {
               ))}
             </ul>
           </div>
-    </div>
-
-
-
+      </div>
     </nav>
-
-
-
   );
 };
 

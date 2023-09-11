@@ -12,13 +12,19 @@ import dynamic from 'next/dynamic'
 
 import "leaflet/dist/leaflet.css";
 
-const Map = dynamic(
-  () => import('../components/Map/Map'), // replace '@components/map' with your component's location
-  { ssr: false } // This line is important. It's what prevents server-side render
-)
-
-
 const Home = () => {
+
+  const Map = dynamic(
+    () => import('../components/Map/Map'),
+    { loading: () => <p>loading...</p>,
+    ssr: false }
+  )
+
+  // const { sortData, prettyPrintStat } = dynamic(() => import('../constants/util'), {
+  //   loading: () => <p>loading...</p>,
+  //   ssr: false
+  // });
+
   const [country, setInputCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState({});
   const [countryName, setCountryName] = useState("worldwide");
@@ -84,7 +90,7 @@ const Home = () => {
 
   return (
     <div className="app">
-      <Header />
+      {/* <Header /> */}
       <Papers country={country} handleCountryChange={handleCountryChange} countries={countries} className="z-30"/>
       <div className="app__middle top-20">
         <div className="container">

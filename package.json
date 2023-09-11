@@ -19,6 +19,7 @@
     "chartjs-adapter-moment": "^1.0.1",
     "debug": "^4.3.4",
     "leaflet": "^1.9.4",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
     "moment": "^2.29.4",
     "next": "13.4.19",
     "numeral": "^2.0.6",

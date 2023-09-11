@@ -1,3 +1,5 @@
+'use client'
+
 export { default as Header } from './Header/Header';
 export { default as Papers } from './Papers/Papers';
 export { default as Sidebar } from './Sidebar/Sidebar';

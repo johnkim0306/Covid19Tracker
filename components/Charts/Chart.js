@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import { Line, Pie } from "react-chartjs-2";
 import axios from "axios";
