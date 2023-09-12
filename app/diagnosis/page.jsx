@@ -107,27 +107,13 @@ const formFields = [
   { name: 'cough', label: 'Coughing' },
 ];
 
-function makePredictions() {
-  // Create an array of values from the details object
-  const inputArray = [
-    parseFloat(details.cough),
-    parseFloat(details.fever),
-    parseFloat(details.soreThroat),
-    parseFloat(details.shortnessOfBreath),
-    parseFloat(details.headAche),
-    parseFloat(details.age),
-    parseFloat(details.gender),
-  ];
 
-  // Make sure inputArray is of the correct shape expected by your model
-  // For example, you might need to convert it to a 2D tensor
-  const inputTensor = tf.tensor2d([inputArray]);
-
-  // Use the model to make predictions
-  const predictions = model.predict(inputTensor);
-
-  // Handle predictions as needed
-  console.log(predictions);
+async function makePrediction() {
+  const inputData = tf.tensor2d([[/* your input data here */]]);
+  const prediction = model.predict(inputData);
+  const result = prediction.dataSync(); // Get the prediction result as an array
+  // Process and use the result as needed
+  console.log('Prediction:', result);
 }
 
 const Diagnosis = () => {
@@ -148,7 +134,9 @@ const Diagnosis = () => {
     // Define the async function to load the model
     async function loadModel() {
       try {
-        const loadedModel = await tf.loadLayersModel('./model.json');
+        // const loadedModel = await tf.loadLayersModel('./model.json');
+        const loadedModel = await tf.loadLayersModel('/model/model.json');
+
         setModel(loadedModel);
       } catch (error) {
         console.error('Error loading the model:', error);
@@ -163,8 +151,14 @@ const Diagnosis = () => {
   useEffect(() => {
     if (model) {
       // Example: Perform an inference using the loaded model
-      const input = tf.tensor2d([[/* your input data here */]]);
-      const predictions = model.predict(input);
+      // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
+      // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
+      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int64');
+
+      console.log("Input tensor:", input);
+      const predictions = model.predict(input.cast('int32'));
+      const result = predictions.dataSync();
+
       // Do something with predictions
     }
   }, [model]);
@@ -188,7 +182,15 @@ const Diagnosis = () => {
   // };
 
   const handleSubmit = () => {
-    // Pass the details to another component or perform some action
+    const inputArray = [
+      parseInt(details.cough, 10),
+      parseInt(details.fever, 10),
+      parseInt(details.soreThroat, 10),
+      parseInt(details.shortnessOfBreath, 10),
+      parseInt(details.headAche, 10),
+      parseInt(details.age, 10),
+      parseInt(details.gender, 10),
+    ];
     console.log('Details1:', details);
   };
 
