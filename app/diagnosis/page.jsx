@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from '@mui/material/styles';
 // import Radio from '@mui/material/Radio';
 // import RadioGroup from '@mui/material/RadioGroup';
@@ -17,6 +17,15 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './Diagnosis.scss';
+import * as tf from '@tensorflow/tfjs';
+
+// loaded_model = tf.keras.models.load_model("path_to_my_model_directory")
+// loaded_model = tf.loadGraphModel('diagnosis/saved_model.pb')
+
+// const model = await tf.loadGraphModel('diagnosis/saved_model.pb');
+
+// console.log(model)
+
 
 const BpIcon = styled('span')(({ theme }) => ({
   borderRadius: '50%',
@@ -88,6 +97,39 @@ const theme = createTheme({
   },
 });
 
+const formFields = [
+  { name: 'gender', label: 'Gender' },
+  { name: 'age', label: 'Is your Age 65 or above?' },
+  { name: 'fever', label: 'Fever' },
+  { name: 'soreThroat', label: 'Sore Throat' },
+  { name: 'shortnessOfBreath', label: 'Shortness of Breath' },
+  { name: 'headAche', label: 'Headache' },
+  { name: 'cough', label: 'Coughing' },
+];
+
+function makePredictions() {
+  // Create an array of values from the details object
+  const inputArray = [
+    parseFloat(details.cough),
+    parseFloat(details.fever),
+    parseFloat(details.soreThroat),
+    parseFloat(details.shortnessOfBreath),
+    parseFloat(details.headAche),
+    parseFloat(details.age),
+    parseFloat(details.gender),
+  ];
+
+  // Make sure inputArray is of the correct shape expected by your model
+  // For example, you might need to convert it to a 2D tensor
+  const inputTensor = tf.tensor2d([inputArray]);
+
+  // Use the model to make predictions
+  const predictions = model.predict(inputTensor);
+
+  // Handle predictions as needed
+  console.log(predictions);
+}
+
 const Diagnosis = () => {
   const [error, setError] = React.useState(false);
   const [details, setDetails] = useState({
@@ -97,8 +139,35 @@ const Diagnosis = () => {
     shortnessOfBreath: '',
     headAche: '',
     age: '',
-    gender: '', // Initialize with default value
+    gender: '',
   })
+
+  const [model, setModel] = useState(null);
+
+  useEffect(() => {
+    // Define the async function to load the model
+    async function loadModel() {
+      try {
+        const loadedModel = await tf.loadLayersModel('./model.json');
+        setModel(loadedModel);
+      } catch (error) {
+        console.error('Error loading the model:', error);
+      }
+    }
+
+    // Call the async function to load the model
+    loadModel();
+  }, []);
+
+  // You can use the model in your component once it's loaded
+  useEffect(() => {
+    if (model) {
+      // Example: Perform an inference using the loaded model
+      const input = tf.tensor2d([[/* your input data here */]]);
+      const predictions = model.predict(input);
+      // Do something with predictions
+    }
+  }, [model]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -127,105 +196,21 @@ const Diagnosis = () => {
     <section className="app px-32 mt-16">
       <h2 style={{ width: '60%', padding: '28px', color: 'black' }} className="font-bold text-5xl px-14">Diagnosis Form</h2>
       <form>
-        <FormControl error={error} variant="standard">
-          <FormLabel id="demo-customized-radios">Gender</FormLabel>
-          <RadioGroup
-            row
-            value={details.gender} // Bind the value to the state
-            onChange={handleInputChange} // Handle change event
-            // defaultValue="female"
-            aria-labelledby="demo-customized-radios"
-            name="gender"
-          >
-            <FormControlLabel theme={theme} value="female" control={<BpRadio />} label="Female" />
-            <FormControlLabel theme={theme} value="male" control={<BpRadio />} label="Male" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl error={error} variant="standard">
-          <FormLabel id="demo-customized-radios">Is your Age 65 or above?</FormLabel>
-          <RadioGroup
-            row
-            value={details.age} // Bind the value to the state
-            onChange={handleInputChange} // Handle change event
-            // defaultValue="female"
-            aria-labelledby="demo-customized-radios"
-            name="age"
-          >
-            <FormControlLabel theme={theme} value="Yes" control={<BpRadio />} label="Yes" />
-            <FormControlLabel theme={theme} value="No" control={<BpRadio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl variant="standard">
-          <FormLabel id="demo-customized-radios">Fever</FormLabel>
-          <RadioGroup
-            row
-            value={details.fever}
-            onChange={handleInputChange}
-            aria-labelledby="demo-customized-radios"
-            name="fever"
-          >
-            <FormControlLabel theme={theme} value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel theme={theme} value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl component="fieldset">
-          <FormLabel  theme={theme} id="demo-customized-radios">Sore Throat</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="demo-customized-radios"
-            name="soreThroat"
-            value={details.soreThroat}
-            onChange={handleInputChange}
-          >
-            <FormControlLabel theme={theme} value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel theme={theme} value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl component="fieldset">
-          <FormLabel  theme={theme} id="demo-customized-radios">Shortness of Breath</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="demo-customized-radios"
-            name="shortnessOfBreath"
-            value={details.shortnessOfBreath}
-            onChange={handleInputChange}
-          >
-            <FormControlLabel theme={theme} value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel theme={theme} value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl component="fieldset">
-          <FormLabel  theme={theme} id="demo-customized-radios">Headache</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="demo-customized-radios"
-            name="headAche"
-            value={details.headAche}
-            onChange={handleInputChange}
-          >
-            <FormControlLabel theme={theme} value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel theme={theme} value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
-
-        <FormControl component="fieldset">
-          <FormLabel  theme={theme} id="demo-customized-radios">Coughing</FormLabel>
-          <RadioGroup
-            row
-            aria-labelledby="demo-customized-radios"
-            name="cough"
-            value={details.cough}
-            onChange={handleInputChange}
-          >
-            <FormControlLabel theme={theme} value="yes" control={<Radio />} label="Yes" />
-            <FormControlLabel theme={theme} value="no" control={<Radio />} label="No" />
-          </RadioGroup>
-        </FormControl>
+      {formFields.map((field) => (
+          <FormControl key={field.name} error={error} variant="standard">
+            <FormLabel id={`demo-customized-radios`}>{field.label}</FormLabel>
+            <RadioGroup
+              row
+              value={details[field.name]}
+              onChange={handleInputChange}
+              aria-labelledby={`demo-customized-radios`}
+              name={field.name}
+            >
+              <FormControlLabel theme={theme} value="yes" control={<BpRadio />} label="Yes" />
+              <FormControlLabel theme={theme} value="no" control={<BpRadio />} label="No" />
+            </RadioGroup>
+          </FormControl>
+        ))}
 
         <Button variant="contained" onClick={handleSubmit}>
           Submit
