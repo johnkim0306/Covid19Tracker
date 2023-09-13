@@ -129,6 +129,15 @@ const Diagnosis = () => {
   })
 
   const [model, setModel] = useState(null);
+  const inputArray = [
+    parseInt(details.cough, 10),
+    parseInt(details.fever, 10),
+    parseInt(details.soreThroat, 10),
+    parseInt(details.shortnessOfBreath, 10),
+    parseInt(details.headAche, 10),
+    parseInt(details.age, 10),
+    parseInt(details.gender, 10),
+  ];
 
   useEffect(() => {
     // Define the async function to load the model
@@ -136,8 +145,16 @@ const Diagnosis = () => {
       try {
         // const loadedModel = await tf.loadLayersModel('./model.json');
         const loadedModel = await tf.loadLayersModel('/model/model.json');
-
-        setModel(loadedModel);
+        if (loadedModel) {
+          console.log("loadedModel", loadedModel)
+          console.log("loadedmodel's summary: ", loadedModel.summary())
+          let newModel = tf.keras.models.clone_model(loadedModel, dtype=tf.int32)
+          newModel.set_weights(loadedModel.get_weights()) // copy the weights from loadedModel
+          console.log("newModel", newModel)
+          setModel(newModel);
+        } else {
+          console.error('Loaded model is undefined.');
+        }
       } catch (error) {
         console.error('Error loading the model:', error);
       }
@@ -145,7 +162,35 @@ const Diagnosis = () => {
 
     // Call the async function to load the model
     loadModel();
+    console.log(model)
   }, []);
+
+
+  // useEffect(() => {
+  //   // Define the async function to load the model
+  //   async function loadModel() {
+  //     try {
+  //       // const loadedModel = await tf.loadLayersModel('./model.json');
+  //       const model = await tf.loadLayersModel('http://localhost:3000/model/model.json');
+  //       if (model) {
+  //         console.log("loadedModel", model)
+  //         let newModel = tf.keras.models.clone_model(model, dtype=tf.int32)
+  //         newModel.set_weights(model.get_weights()) // copy the weights from loadedModel
+  //         console.log("newModel", newModel)
+  //         setModel(newModel);
+  //       } else {
+  //         console.error('Loaded model is undefined.');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error loading the model:', error);
+  //     }
+  //   }
+
+  //   // Call the async function to load the model
+  //   loadModel();
+  //   console.log(model)
+  // }, []);
+
 
   // You can use the model in your component once it's loaded
   useEffect(() => {
@@ -153,10 +198,10 @@ const Diagnosis = () => {
       // Example: Perform an inference using the loaded model
       // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
       // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
-      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int64');
+      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'float32');
 
       console.log("Input tensor:", input);
-      const predictions = model.predict(input.cast('int32'));
+      const predictions = model.predict(input);
       const result = predictions.dataSync();
 
       // Do something with predictions
@@ -182,15 +227,20 @@ const Diagnosis = () => {
   // };
 
   const handleSubmit = () => {
-    const inputArray = [
-      parseInt(details.cough, 10),
-      parseInt(details.fever, 10),
-      parseInt(details.soreThroat, 10),
-      parseInt(details.shortnessOfBreath, 10),
-      parseInt(details.headAche, 10),
-      parseInt(details.age, 10),
-      parseInt(details.gender, 10),
-    ];
+    // Ensure that the model is loaded
+    console.log("swag")
+    if (model) {
+      console.log("Swag2")
+
+      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int64');
+
+      console.log("Input tensor:", input);
+      const predictions = model.predict(input.cast('int32'));
+      const result = predictions.dataSync();
+      console.log('Prediction:', result);
+    }
+
+    // Pass the details to another component or perform some action
     console.log('Details1:', details);
   };
 
