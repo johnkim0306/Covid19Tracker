@@ -146,10 +146,13 @@ const Diagnosis = () => {
         // const loadedModel = await tf.loadLayersModel('./model.json');
         const loadedModel = await tf.loadLayersModel('/model/model.json');
         if (loadedModel) {
-          console.log("loadedModel", loadedModel)
-          console.log("loadedmodel's summary: ", loadedModel.summary())
-          let newModel = tf.keras.models.clone_model(loadedModel, dtype=tf.int32)
+          console.log("loadedModel24", loadedModel)
+          console.log("loadedmodel's summary56: ", loadedModel.summary())
+
+          // let newModel = tf.keras.models.clone_model(loadedModel, dtype=tf.int32)
+          const chosenLayer = newModel.getLayer('dense_4') 
           newModel.set_weights(loadedModel.get_weights()) // copy the weights from loadedModel
+          chosenLayer.getWeights()[0].print()
           console.log("newModel", newModel)
           setModel(newModel);
         } else {
