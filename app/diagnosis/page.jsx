@@ -108,14 +108,6 @@ const formFields = [
 ];
 
 
-async function makePrediction() {
-  const inputData = tf.tensor2d([[/* your input data here */]]);
-  const prediction = model.predict(inputData);
-  const result = prediction.dataSync(); // Get the prediction result as an array
-  // Process and use the result as needed
-  console.log('Prediction:', result);
-}
-
 const Diagnosis = () => {
   const [error, setError] = React.useState(false);
   const [details, setDetails] = useState({
@@ -148,10 +140,14 @@ const Diagnosis = () => {
         if (loadedModel) {
           console.log("loadedModel", loadedModel)
           console.log("loadedmodel's summary: ", loadedModel.summary())
-          let newModel = tf.keras.models.clone_model(loadedModel, dtype=tf.int32)
-          newModel.set_weights(loadedModel.get_weights()) // copy the weights from loadedModel
-          console.log("newModel", newModel)
-          setModel(newModel);
+          // const int32Tensor = tf.cast(loadedModel, 'int32'); // Convert to int32
+
+          loadedModel.layers.forEach(layer => {
+            if (layer.trainable) {
+              layer.setWeights(layer.getWeights().map(weight => tf.cast(weight, 'float32')));
+            }
+          });
+          setModel(loadedModel);
         } else {
           console.error('Loaded model is undefined.');
         }
@@ -166,39 +162,13 @@ const Diagnosis = () => {
   }, []);
 
 
-  // useEffect(() => {
-  //   // Define the async function to load the model
-  //   async function loadModel() {
-  //     try {
-  //       // const loadedModel = await tf.loadLayersModel('./model.json');
-  //       const model = await tf.loadLayersModel('http://localhost:3000/model/model.json');
-  //       if (model) {
-  //         console.log("loadedModel", model)
-  //         let newModel = tf.keras.models.clone_model(model, dtype=tf.int32)
-  //         newModel.set_weights(model.get_weights()) // copy the weights from loadedModel
-  //         console.log("newModel", newModel)
-  //         setModel(newModel);
-  //       } else {
-  //         console.error('Loaded model is undefined.');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error loading the model:', error);
-  //     }
-  //   }
-
-  //   // Call the async function to load the model
-  //   loadModel();
-  //   console.log(model)
-  // }, []);
-
-
   // You can use the model in your component once it's loaded
   useEffect(() => {
     if (model) {
       // Example: Perform an inference using the loaded model
       // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
       // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
-      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'float32');
+      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
 
       console.log("Input tensor:", input);
       const predictions = model.predict(input);
@@ -216,15 +186,6 @@ const Diagnosis = () => {
     }));
   };
 
-  // const handleRadioChange = (event) => {
-  //   setDetails((prevDetails) => ({
-  //     ...prevDetails,
-
-  //   }))
-  //   setValue(event.target.value);
-  //   setHelperText(' ');
-  //   setError(false);
-  // };
 
   const handleSubmit = () => {
     // Ensure that the model is loaded
@@ -232,7 +193,7 @@ const Diagnosis = () => {
     if (model) {
       console.log("Swag2")
 
-      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int64');
+      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
 
       console.log("Input tensor:", input);
       const predictions = model.predict(input.cast('int32'));
