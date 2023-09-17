@@ -83,12 +83,9 @@ function BpRadio(props) {
 
 const theme = createTheme({
   components: {
-    // Name of the component
     MuiFormControlLabel: {
       styleOverrides: {
-        // Name of the slot
         root: {
-          // Some CSS
           fontSize: '1rem',
           color: 'black',
         },
