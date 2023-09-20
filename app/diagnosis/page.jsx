@@ -88,12 +88,9 @@ function BpRadio(props) {
 
 const theme = createTheme({
   components: {
-    // Name of the component
     MuiFormControlLabel: {
       styleOverrides: {
-        // Name of the slot
         root: {
-          // Some CSS
           fontSize: '1rem',
           color: 'black',
         },
@@ -207,7 +204,6 @@ const Diagnosis = () => {
 
 
   const handleSubmit = () => {
-    // Ensure that the model is loaded
     console.log("swag")
     if (model) {
       console.log("Swag2")
