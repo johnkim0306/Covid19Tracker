@@ -13,7 +13,12 @@ import {
   RadioGroup,
   FormControlLabel,
   Button,
-  Radio
+  Radio,
+  Dialog, // Import Dialog component
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './Diagnosis.scss';
@@ -107,7 +112,6 @@ const formFields = [
   { name: 'cough', label: 'Coughing' },
 ];
 
-
 const Diagnosis = () => {
   const [error, setError] = React.useState(false);
   const [details, setDetails] = useState({
@@ -119,6 +123,7 @@ const Diagnosis = () => {
     age: '',
     gender: '',
   })
+  const [showWarningPopup, setShowWarningPopup] = useState(false);
 
   const [model, setModel] = useState(null);
   const inputArray = [
@@ -130,6 +135,17 @@ const Diagnosis = () => {
     parseInt(details.age, 10),
     parseInt(details.gender, 10),
   ];
+
+  const showWarning = (result) => {
+    if (result > 0.50) {
+      setShowWarningPopup(true);
+    }
+  };
+  
+  const closeWarning = () => {
+    setShowWarningPopup(false);
+  };
+
 
   useEffect(() => {
     // Define the async function to load the model
@@ -180,6 +196,9 @@ const Diagnosis = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    // Convert "yes" to 1 and "no" to 0
+    const convertedValue = value === "yes" ? 1 : 0;
+
     setDetails((prev) => ({
       ...prev,
       [name]: value,
@@ -193,12 +212,30 @@ const Diagnosis = () => {
     if (model) {
       console.log("Swag2")
 
-      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
+      // Convert "yes" to 1, "no" to 0, "female" to 0, and "male" to 1
+      const convertedInputArray = inputArray.map((value, index) => {
+        if (formFields[index].name === 'gender') {
+          return value === 'male' ? 1 : 0;
+        }
+        if (formFields[index].name === 'age') {
+          return value === 'Yes' ? 0 : 1;
+        }
+        if (formFields[index].name === 'gender') {
+          return value === 'male' ? 1 : 0;
+        }
+        return value === 'yes' ? 1 : 0;
+      });
+
+      console.log("page.jsx: ", convertedInputArray)
+
+      const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
 
       console.log("Input tensor:", input);
       const predictions = model.predict(input.cast('int32'));
       const result = predictions.dataSync();
       console.log('Prediction:', result);
+
+      showWarning(result);
     }
 
     // Pass the details to another component or perform some action
@@ -209,26 +246,52 @@ const Diagnosis = () => {
     <section className="app px-32 mt-16">
       <h2 style={{ width: '60%', padding: '28px', color: 'black' }} className="font-bold text-5xl px-14">Diagnosis Form</h2>
       <form>
-      {formFields.map((field) => (
-          <FormControl key={field.name} error={error} variant="standard">
-            <FormLabel id={`demo-customized-radios`}>{field.label}</FormLabel>
-            <RadioGroup
-              row
-              value={details[field.name]}
-              onChange={handleInputChange}
-              aria-labelledby={`demo-customized-radios`}
-              name={field.name}
-            >
-              <FormControlLabel theme={theme} value="yes" control={<BpRadio />} label="Yes" />
-              <FormControlLabel theme={theme} value="no" control={<BpRadio />} label="No" />
-            </RadioGroup>
-          </FormControl>
-        ))}
-
-        <Button variant="contained" onClick={handleSubmit}>
-          Submit
-        </Button>
+        {formFields.map((field) => (
+            <FormControl key={field.name} error={error} variant="standard">
+              <FormLabel id={`demo-customized-radios`}>{field.label}</FormLabel>
+              
+              {field.name === 'gender' ? (
+                <RadioGroup
+                  row
+                  value={details[field.name]}
+                  onChange={handleInputChange}
+                  aria-labelledby={`demo-customized-radios`}
+                  name={field.name}
+                >
+                  <FormControlLabel theme={theme} value="female" control={<BpRadio />} label="Female" />
+                  <FormControlLabel theme={theme} value="male" control={<BpRadio />} label="Male" />
+                </RadioGroup>
+              ) : (
+                <RadioGroup
+                  row
+                  value={details[field.name]}
+                  onChange={handleInputChange}
+                  aria-labelledby={`demo-customized-radios`}
+                  name={field.name}
+                >
+                  <FormControlLabel theme={theme} value="yes" control={<BpRadio />} label="Yes" />
+                  <FormControlLabel theme={theme} value="no" control={<BpRadio />} label="No" />
+                </RadioGroup>
+              )}
+            </FormControl>
+          ))}
+          <Button variant="contained" onClick={handleSubmit}>
+            Submit
+          </Button>
       </form>
+      <Dialog open={showWarningPopup} onClose={closeWarning}>
+        <DialogTitle>Warning</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You are most likely have covid 19, Please isolate yourself from the others and contact health canada for instrucrtions.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeWarning} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
 
   );
