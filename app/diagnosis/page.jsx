@@ -185,7 +185,6 @@ const Diagnosis = () => {
 
 
   const handleSubmit = () => {
-    // Ensure that the model is loaded
     console.log("swag")
     if (model) {
       console.log("Swag2")
