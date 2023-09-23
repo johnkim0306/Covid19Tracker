@@ -121,7 +121,7 @@ const Diagnosis = () => {
     gender: '',
   })
   const [showWarningPopup, setShowWarningPopup] = useState(false);
-
+  const [result, setResult] = useState(null); // Declare and initialize result state
   const [model, setModel] = useState(null);
   const inputArray = [
     parseInt(details.cough, 10),
@@ -143,6 +143,18 @@ const Diagnosis = () => {
     setShowWarningPopup(false);
   };
 
+  const handleResult = (result) => {
+    if (result <= 0.50) {
+      return (
+        <div>
+          <p>You don't have COVID-19.</p>
+          <Button variant="contained" onClick={() => window.location.href = '/'}>Go to Main Page</Button>
+        </div>
+      );
+    }
+    // Return null if result is greater than 0.50
+    return null;
+  };
 
   useEffect(() => {
     // Define the async function to load the model
@@ -275,19 +287,23 @@ const Diagnosis = () => {
             Submit
           </Button>
       </form>
-      <Dialog open={showWarningPopup} onClose={closeWarning}>
-        <DialogTitle>Warning</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            You are most likely have covid 19, Please isolate yourself from the others and contact health canada for instrucrtions.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeWarning} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {showWarningPopup ? (
+        <Dialog open={showWarningPopup} onClose={closeWarning}>
+          <DialogTitle>Warning</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              You are most likely have COVID-19. Please isolate yourself from others and contact health Canada for instructions.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeWarning} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : (
+        handleResult(result) // Render message and button conditionally
+      )}
     </section>
 
   );
