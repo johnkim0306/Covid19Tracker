@@ -121,20 +121,24 @@ const Diagnosis = () => {
     gender: '',
   })
   const [showWarningPopup, setShowWarningPopup] = useState(false);
-  const [showWarningPopup2, setShowWarningPopup2] = useState(false);
-  const [result, setResult] = useState(null); // Declare and initialize result state
+  const [showRedirectPopup, setshowRedirectPopup] = useState(false);
+  const [result, setResult] = useState(null);
   const [model, setModel] = useState(null);
 
   const showWarning = (result) => {
     if (result > 0.50) {
       setShowWarningPopup(true);
-      setShowWarningPopup2(true);
+    } else {
+      setshowRedirectPopup(true)
     }
   };
   
   const closeWarning = () => {
     setShowWarningPopup(false);
-    setShowWarningPopup2(false);
+  };
+
+  const closeRedirect = () => {
+    setshowRedirectPopup(false);
   };
 
   const handleResult = (result) => {
@@ -193,6 +197,52 @@ const Diagnosis = () => {
     console.log(model)
   }, []);
 
+  // useEffect(() => {
+  //   // This useEffect will be triggered whenever 'details' changes
+  //   if (model) {
+  //     console.log("Swag2");
+  //     console.log("swag3: ",         parseInt(details.cough, 10))
+  //     const inputArray = [
+  //       parseInt(details.cough, 10),
+  //       parseInt(details.fever, 10),
+  //       parseInt(details.soreThroat, 10),
+  //       parseInt(details.shortnessOfBreath, 10),
+  //       parseInt(details.headAche, 10),
+  //       parseInt(details.age, 10),
+  //       parseInt(details.gender, 10),
+  //     ];
+  
+  //     // Convert "yes" to 1, "no" to 0, "female" to 0, and "male" to 1
+  //     const convertedInputArray = inputArray.map((value, index) => {
+  //       if (formFields[index].name === 'gender') {
+  //         return value === 'male' ? 1 : 0;
+  //       }
+  //       if (formFields[index].name === 'age') {
+  //         return value === 'Yes' ? 0 : 1;
+  //       }
+  //       if (formFields[index].name === 'gender') {
+  //         return value === 'male' ? 1 : 0;
+  //       }
+  //       return value === 'yes' ? 1 : 0;
+  //     });
+  
+  //     console.log("inputArray.jsx: ", inputArray);
+  //     console.log("convertedInputArray.jsx: ", convertedInputArray);
+  
+  //     const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
+  
+  //     console.log("Input tensor:", input);
+  //     const predictions = model.predict(input.cast('int32'));
+  //     const result = predictions.dataSync();
+  //     console.log('Prediction:', result);
+  
+  //     showWarning(result);
+  //   }
+  
+  //   // Pass the details to another component or perform some action
+  //   console.log('Details1:', details);
+  // }, [details]); // This effect depends on 'details' changes
+
 
   // You can use the model in your component once it's loaded
   // useEffect(() => {
@@ -212,66 +262,91 @@ const Diagnosis = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    // Convert "yes" to 1 and "no" to 0
-    const convertedValue = value === "yes" ? 1 : 0;
-
     setDetails((prev) => ({
       ...prev,
       [name]: value,
     }));
+    console.log(details)
   };
 
+  const convertToBinary = (convertedValue) => {
+    convertedValue = convertedValue == 'yes' ? '1' : '0';
+    return convertedValue;
+  };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Perform any actions you need with the form data, e.g., send it to a server
     console.log("swag")
-    if (model) {
-      console.log("Swag2")
-      console.log("swag3: ",         parseInt(details.cough, 10),)
-      const inputArray = [
-        parseInt(details.cough, 10),
-        parseInt(details.fever, 10),
-        parseInt(details.soreThroat, 10),
-        parseInt(details.shortnessOfBreath, 10),
-        parseInt(details.headAche, 10),
-        parseInt(details.age, 10),
-        parseInt(details.gender, 10),
-      ];
+    try {
+      if (model) {
+        console.log("Swag2")
 
-      // Convert "yes" to 1, "no" to 0, "female" to 0, and "male" to 1
-      const convertedInputArray = inputArray.map((value, index) => {
-        if (formFields[index].name === 'gender') {
-          return value === 'male' ? 1 : 0;
+        const { cough, fever, soreThroat, shortnessOfBreath, headAche, age, gender } = details;
+        console.log('Form data submitted:', gender, age);
+
+        let convertedGender;
+        let convertedAge;
+        if (gender == 'male') {
+          convertedGender = '1'
+        } else {
+          convertedGender = '0'
         }
-        if (formFields[index].name === 'age') {
-          return value === 'Yes' ? 0 : 1;
+
+        if (age == 'yes') {
+          convertedAge = '0'
+        } else {
+          convertedAge = '1'
         }
-        if (formFields[index].name === 'gender') {
-          return value === 'male' ? 1 : 0;
-        }
-        return value === 'yes' ? 1 : 0;
-      });
 
-      console.log("inputArray.jsx: ", inputArray)
-      console.log("convertedInputArray.jsx: ", convertedInputArray)
+        const convertedCough = convertToBinary(cough);
+        const convertedFever = convertToBinary(fever);
+        const convertedSoreThroat = convertToBinary(soreThroat);
+        const convertedShortnessOfBreath = convertToBinary(shortnessOfBreath);
+        const convertedHeadAche = convertToBinary(headAche);
 
-      const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
+        console.log('Converted Values:', {
+          cough: convertedCough,
+          fever: convertedFever,
+          soreThroat: convertedSoreThroat,
+          shortnessOfBreath: convertedShortnessOfBreath,
+          headAche: convertedHeadAche,
+          age: convertedAge,
+          gender: convertedGender,
+        });
 
-      console.log("Input tensor:", input);
-      const predictions = model.predict(input.cast('int32'));
-      const result = predictions.dataSync();
-      console.log('Prediction:', result);
+        const convertedInputArray = [
+          parseInt(convertedCough, 10),
+          parseInt(convertedFever, 10),
+          parseInt(convertedSoreThroat, 10),
+          parseInt(convertedShortnessOfBreath, 10),
+          parseInt(convertedHeadAche, 10),
+          parseInt(convertedAge, 10),
+          parseInt(convertedGender, 10)
+        ];
 
-      showWarning(result);
+        console.log("convertedInputArray.jsx: ", convertedInputArray)  
+        const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
+        console.log("Input tensor:", input);
+        const predictions = await model.predict(input.cast('int32'));
+        const result = predictions.dataSync();
+        console.log('Prediction:', result);
+  
+        showWarning(result);
+      }
+  
+      // Pass the details to another component or perform some action
+      console.log('Details1:', details);
+    } catch (error){
+      console.error('Error in handleSubmit:', error);
     }
-
-    // Pass the details to another component or perform some action
-    console.log('Details1:', details);
   };
 
   return (
     <section className="app px-32 mt-16">
       <h2 style={{ width: '60%', padding: '28px', color: 'black' }} className="font-bold text-5xl px-14">Diagnosis Form</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         {formFields.map((field) => (
             <FormControl key={field.name} error={error} variant="standard">
               <FormLabel id={`demo-customized-radios`}>{field.label}</FormLabel>
@@ -301,23 +376,39 @@ const Diagnosis = () => {
               )}
             </FormControl>
           ))}
-          <Button variant="contained" onClick={handleSubmit}>
+          <Button variant="contained" type="submit">
             Submit
           </Button>
       </form>
-        <Dialog open={showWarningPopup} onClose={closeWarning}>
-          <DialogTitle>Warning</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              You are most likely have COVID-19. Please isolate yourself from others and contact health Canada for instructions.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={closeWarning} color="primary">
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
+      <Dialog open={showWarningPopup} onClose={closeWarning}>
+        <DialogTitle>Warning</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You most likely have COVID-19. Please isolate yourself from others and contact health Canada for instructions.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeWarning} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={showRedirectPopup} onClose={closeRedirect}>
+        <DialogTitle>Warning</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You most likely don't have COVID-19. However, please contact health Canada for more instructoins.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" onClick={() => window.location.href = '/'}>
+            Go to Main Page
+          </Button>
+          <Button onClick={closeRedirect} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </section>
 
   );
