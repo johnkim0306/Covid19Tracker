@@ -121,32 +121,39 @@ const Diagnosis = () => {
     gender: '',
   })
   const [showWarningPopup, setShowWarningPopup] = useState(false);
+  const [showWarningPopup2, setShowWarningPopup2] = useState(false);
   const [result, setResult] = useState(null); // Declare and initialize result state
   const [model, setModel] = useState(null);
-  const inputArray = [
-    parseInt(details.cough, 10),
-    parseInt(details.fever, 10),
-    parseInt(details.soreThroat, 10),
-    parseInt(details.shortnessOfBreath, 10),
-    parseInt(details.headAche, 10),
-    parseInt(details.age, 10),
-    parseInt(details.gender, 10),
-  ];
 
   const showWarning = (result) => {
     if (result > 0.50) {
       setShowWarningPopup(true);
+      setShowWarningPopup2(true);
     }
   };
   
   const closeWarning = () => {
     setShowWarningPopup(false);
+    setShowWarningPopup2(false);
   };
 
   const handleResult = (result) => {
-    if (result <= 0.50) {
+    if (result <= 0.40 && showWarningPopup2) {
       return (
         <div>
+          <Dialog open={showWarningPopup} onClose={closeWarning}>
+            <DialogTitle>Warning</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                You are most likely have COVID-19. Please isolate yourself from others and contact health Canada for instructions.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeWarning} color="primary">
+                Close
+              </Button>
+            </DialogActions>
+          </Dialog>
           <p>You don't have COVID-19.</p>
           <Button variant="contained" onClick={() => window.location.href = '/'}>Go to Main Page</Button>
         </div>
@@ -188,20 +195,20 @@ const Diagnosis = () => {
 
 
   // You can use the model in your component once it's loaded
-  useEffect(() => {
-    if (model) {
-      // Example: Perform an inference using the loaded model
-      // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
-      // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
-      const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
+  // useEffect(() => {
+  //   if (model) {
+  //     // Example: Perform an inference using the loaded model
+  //     // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
+  //     // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
+  //     const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
 
-      console.log("Input tensor:", input);
-      const predictions = model.predict(input);
-      const result = predictions.dataSync();
+  //     console.log("Input tensor:", input);
+  //     const predictions = model.predict(input);
+  //     const result = predictions.dataSync();
 
-      // Do something with predictions
-    }
-  }, [model]);
+  //     // Do something with predictions
+  //   }
+  // }, [model]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -219,6 +226,16 @@ const Diagnosis = () => {
     console.log("swag")
     if (model) {
       console.log("Swag2")
+      console.log("swag3: ",         parseInt(details.cough, 10),)
+      const inputArray = [
+        parseInt(details.cough, 10),
+        parseInt(details.fever, 10),
+        parseInt(details.soreThroat, 10),
+        parseInt(details.shortnessOfBreath, 10),
+        parseInt(details.headAche, 10),
+        parseInt(details.age, 10),
+        parseInt(details.gender, 10),
+      ];
 
       // Convert "yes" to 1, "no" to 0, "female" to 0, and "male" to 1
       const convertedInputArray = inputArray.map((value, index) => {
@@ -234,7 +251,8 @@ const Diagnosis = () => {
         return value === 'yes' ? 1 : 0;
       });
 
-      console.log("page.jsx: ", convertedInputArray)
+      console.log("inputArray.jsx: ", inputArray)
+      console.log("convertedInputArray.jsx: ", convertedInputArray)
 
       const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
 
@@ -287,7 +305,6 @@ const Diagnosis = () => {
             Submit
           </Button>
       </form>
-      {showWarningPopup ? (
         <Dialog open={showWarningPopup} onClose={closeWarning}>
           <DialogTitle>Warning</DialogTitle>
           <DialogContent>
@@ -301,9 +318,6 @@ const Diagnosis = () => {
             </Button>
           </DialogActions>
         </Dialog>
-      ) : (
-        handleResult(result) // Render message and button conditionally
-      )}
     </section>
 
   );
