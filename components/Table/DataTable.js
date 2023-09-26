@@ -1,9 +1,6 @@
 import * as React from 'react';
-// import { Table, Paper, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination, StylesProvider } from '@material-ui/core';
 import { Table, TableContainer, TableHead, TableBody, TableRow, TableCell, TablePagination } from '@mui/material';
 import Paper from '@mui/material/Paper';
-// import { makeStyles } from "@material-ui/core/styles";
-import { makeStyles } from '@mui/styles';
 import "./DataTable.scss";
 import numeral from "numeral";  
 
@@ -15,17 +12,9 @@ const columns = [
   { id: 'deaths', label: 'Deaths', align: 'center' }
 ];
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    overflow: 'hidden',
-    width: '100%'
-  },
-}));
-
 const formatNumber = (value) => numeral(value).format('0,0');
 
 export default function DataTable({ countries }) {
-  const classes = useStyles();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
@@ -39,7 +28,7 @@ export default function DataTable({ countries }) {
   };
 
   return (
-    <Paper className={classes.paper} >
+    <Paper  sx={{ overflow: 'hidden', width: '100%' }} >
       <TableContainer sx={{ maxHeight: 1220, width: '100%' }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -76,7 +65,6 @@ export default function DataTable({ countries }) {
                 );
               })}
           </TableBody>
-
         </Table>
       </TableContainer>
       <TablePagination
