@@ -1,6 +1,5 @@
 import { MapContainer as LeafletMap, TileLayer, ZoomControl } from "react-leaflet";
 import "./Map.scss";
-// import { showDataOnMap } from "../../constants/util";
 import { Circle, Popup } from "react-leaflet";
 import numeral from "numeral";
 
@@ -61,12 +60,6 @@ export const showDataOnMap = (data, casesType = "cases") =>
       </Popup>
     </Circle>
   ));
-
-
-
-
-
-
 
 const Map = ({ countries, casesType, center, zoom }) => {
   return (
