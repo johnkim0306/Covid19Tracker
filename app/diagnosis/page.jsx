@@ -2,11 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { styled } from '@mui/material/styles';
-// import Radio from '@mui/material/Radio';
-// import RadioGroup from '@mui/material/RadioGroup';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import FormControl from '@mui/material/FormControl';
-// import FormLabel from '@mui/material/FormLabel';
 import {
   FormControl,
   FormLabel,
@@ -14,7 +9,7 @@ import {
   FormControlLabel,
   Button,
   Radio,
-  Dialog, // Import Dialog component
+  Dialog, 
   DialogTitle,
   DialogContent,
   DialogContentText,
@@ -23,14 +18,6 @@ import {
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './Diagnosis.scss';
 import * as tf from '@tensorflow/tfjs';
-
-// loaded_model = tf.keras.models.load_model("path_to_my_model_directory")
-// loaded_model = tf.loadGraphModel('diagnosis/saved_model.pb')
-
-// const model = await tf.loadGraphModel('diagnosis/saved_model.pb');
-
-// console.log(model)
-
 
 const BpIcon = styled('span')(({ theme }) => ({
   borderRadius: '50%',
@@ -163,21 +150,14 @@ const Diagnosis = () => {
         </div>
       );
     }
-    // Return null if result is greater than 0.50
     return null;
   };
 
   useEffect(() => {
-    // Define the async function to load the model
     async function loadModel() {
       try {
-        // const loadedModel = await tf.loadLayersModel('./model.json');
         const loadedModel = await tf.loadLayersModel('/model/model.json');
         if (loadedModel) {
-          console.log("loadedModel", loadedModel)
-          console.log("loadedmodel's summary: ", loadedModel.summary())
-          // const int32Tensor = tf.cast(loadedModel, 'int32'); // Convert to int32
-
           loadedModel.layers.forEach(layer => {
             if (layer.trainable) {
               layer.setWeights(layer.getWeights().map(weight => tf.cast(weight, 'float32')));
@@ -192,73 +172,9 @@ const Diagnosis = () => {
       }
     }
 
-    // Call the async function to load the model
     loadModel();
     console.log(model)
   }, []);
-
-  // useEffect(() => {
-  //   // This useEffect will be triggered whenever 'details' changes
-  //   if (model) {
-  //     console.log("Swag2");
-  //     console.log("swag3: ",         parseInt(details.cough, 10))
-  //     const inputArray = [
-  //       parseInt(details.cough, 10),
-  //       parseInt(details.fever, 10),
-  //       parseInt(details.soreThroat, 10),
-  //       parseInt(details.shortnessOfBreath, 10),
-  //       parseInt(details.headAche, 10),
-  //       parseInt(details.age, 10),
-  //       parseInt(details.gender, 10),
-  //     ];
-  
-  //     // Convert "yes" to 1, "no" to 0, "female" to 0, and "male" to 1
-  //     const convertedInputArray = inputArray.map((value, index) => {
-  //       if (formFields[index].name === 'gender') {
-  //         return value === 'male' ? 1 : 0;
-  //       }
-  //       if (formFields[index].name === 'age') {
-  //         return value === 'Yes' ? 0 : 1;
-  //       }
-  //       if (formFields[index].name === 'gender') {
-  //         return value === 'male' ? 1 : 0;
-  //       }
-  //       return value === 'yes' ? 1 : 0;
-  //     });
-  
-  //     console.log("inputArray.jsx: ", inputArray);
-  //     console.log("convertedInputArray.jsx: ", convertedInputArray);
-  
-  //     const input = tf.tensor2d([convertedInputArray], [1, convertedInputArray.length], 'int32');
-  
-  //     console.log("Input tensor:", input);
-  //     const predictions = model.predict(input.cast('int32'));
-  //     const result = predictions.dataSync();
-  //     console.log('Prediction:', result);
-  
-  //     showWarning(result);
-  //   }
-  
-  //   // Pass the details to another component or perform some action
-  //   console.log('Details1:', details);
-  // }, [details]); // This effect depends on 'details' changes
-
-
-  // You can use the model in your component once it's loaded
-  // useEffect(() => {
-  //   if (model) {
-  //     // Example: Perform an inference using the loaded model
-  //     // const input = tf.tensor2d([[1,1,1,1,1,1,1]]).toInt();
-  //     // const input = tf.tensor2d([[1, 1, 1, 1, 1, 1, 1]]); // Assuming 'int32' is the expected data type
-  //     const input = tf.tensor2d([inputArray], [1, inputArray.length], 'int32');
-
-  //     console.log("Input tensor:", input);
-  //     const predictions = model.predict(input);
-  //     const result = predictions.dataSync();
-
-  //     // Do something with predictions
-  //   }
-  // }, [model]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -275,17 +191,10 @@ const Diagnosis = () => {
   };
 
   const handleSubmit = async () => {
-    event.preventDefault(); // Prevent the default form submission behavior
-
-    // Perform any actions you need with the form data, e.g., send it to a server
-    console.log("swag")
+    event.preventDefault(); 
     try {
       if (model) {
-        console.log("Swag2")
-
         const { cough, fever, soreThroat, shortnessOfBreath, headAche, age, gender } = details;
-        console.log('Form data submitted:', gender, age);
-
         let convertedGender;
         let convertedAge;
         if (gender == 'male') {
@@ -335,8 +244,7 @@ const Diagnosis = () => {
   
         showWarning(result);
       }
-  
-      // Pass the details to another component or perform some action
+
       console.log('Details1:', details);
     } catch (error){
       console.error('Error in handleSubmit:', error);
@@ -410,7 +318,6 @@ const Diagnosis = () => {
         </DialogActions>
       </Dialog>
     </section>
-
   );
 }
 export default Diagnosis; 
