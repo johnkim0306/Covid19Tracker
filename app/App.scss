@@ -101,7 +101,6 @@ body {
 
   &__right {
     display: flex;
-    //margin-right: 1rem;
 
     @media screen and (max-width: 600px) {
       width: 100%;
@@ -152,14 +151,11 @@ body {
 @media (max-width: 1300px) {
   .app {
     flex-direction: column;
-    //align-items: center;
-    //background: red;
   }
 }
 
 @media screen and (max-width: 600px) {
   .app {
-    //align-items: center;
     width: 100%;
   }
 }

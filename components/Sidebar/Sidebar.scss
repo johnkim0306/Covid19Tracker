@@ -45,18 +45,17 @@
 }
 
 .btn-group {
-    display: flex; /* Add display flex to align items vertically */
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: center; /* Align items in column */
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
     border-radius: .625rem;
     border: none;
-    // margin: 1rem 0;
   
     button {
-      display: flex; /* Use flex to align icon and text vertically */
-      align-items: center; /* Align items vertically */
-      justify-content: flex-start; /* Align icon and text to the start of the button */
-      padding: 0.5rem 1.25rem; /* Adjust padding to fit icon and text */
+      display: flex; 
+      align-items: center; 
+      justify-content: flex-start;
+      padding: 0.5rem 1.25rem;
       height: 5rem;
       width: 95%;
       transition-duration: 0.4s;
@@ -66,7 +65,7 @@
       border: 0.0625rem solid #DEDEDE;
       background-color: white;
       color: black;
-      text-align: left; /* Adjust text alignment to left */
+      text-align: left;
       text-decoration: none;
       font-size: 1rem;
       margin: .3125rem .125rem;
@@ -76,11 +75,11 @@
     button span.MuiButton-label {
       display: flex;
       align-items: center;
-      flex: 1; /* Allow text to expand and fill remaining space */
+      flex: 1;
     }
 
     button .MuiSvgIcon-root {
-      margin-right: 0.125rem; /* Add space between icon and text */
+      margin-right: 0.125rem;
     }
 
     a {
@@ -97,7 +96,7 @@
     }
   
     button:not(:last-child) {
-      border-bottom: none; /* Prevent double borders */
+      border-bottom: none;
     }
 }
 

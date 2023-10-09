@@ -90,7 +90,6 @@ const Home = () => {
 
   return (
     <div className="app">
-      {/* <Header /> */}
       <Papers country={country} handleCountryChange={handleCountryChange} countries={countries} className="z-30"/>
       <div className="app__middle top-20">
         <div className="container">
@@ -174,7 +173,6 @@ const Home = () => {
 
         </div>
       </div>
-      {/* <Footer /> */}
     </div>
   );
 };
