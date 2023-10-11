@@ -7,8 +7,6 @@ import numeral from "numeral";
 import './chart.scss'
 import 'chartjs-adapter-moment';
 import 'moment';
-// import {Chart, ArcElement} from 'chart.js'
-// Chart.register(ArcElement);
 import 'chart.js/auto';
 
 const options = {

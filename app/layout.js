@@ -1,7 +1,5 @@
 
 import "styles/globals.css";
-// import { Header } from '@/components'
-// import { Header } from '@/components/Header/Header';
 import { Header } from "../components";
 import { Footer } from "../components";
 
